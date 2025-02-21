@@ -1,5 +1,9 @@
-use demo_ffi;
+use uuid_ffi;
 
 fn main() {
-    demo_ffi::ffi::generate().expect("Failed to generate headers");
+    #[cfg(feature = "headers")]
+    uuid_ffi::generate_headers().expect("Failed to generate headers");
+
+
+    uuid_ffi::ffi::generate().expect("Failed to generate headers");
 }
