@@ -12,7 +12,7 @@ pub struct Point {
 /* Export a Rust function to the C world. */
 /// Returns the middle point of `[a, b]`.
 #[ffi_export]
-fn mid_point(a: &Point, b: &Point) -> Point {
+pub fn mid_point(a: &Point, b: &Point) -> Point {
     Point {
         x: (a.x + b.x) / 2.,
         y: (a.y + b.y) / 2.,

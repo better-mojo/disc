@@ -11,13 +11,13 @@ includes:
     optional: true
 
   uuid-ffi:
-    aliases: [ "rf" ]
+    aliases: [ "uf" ]
     taskfile: ./packages/uuid-ffi/
     dir: ./packages/uuid-ffi/
     optional: true
 
   disc-ffi:
-    aliases: [ "nf" ]
+    aliases: [ "disc:f" ]
     taskfile: ./packages/disc-ffi/
     dir: ./packages/disc-ffi/
     optional: true
