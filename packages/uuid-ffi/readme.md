@@ -2,7 +2,7 @@
 
 ## build
 
-- run `main.c`
+- ✅ run [main.c](main.c)
 
 ```make
 
@@ -15,7 +15,9 @@ task uuid-ffi:build
 
 # run main.c
 task uuid-ffi:r   
-  
+
+# or:
+gcc -L ../../target/debug -l uuid_ffi  -o main  main.c  -include stdio.h     
  
 ```
 
