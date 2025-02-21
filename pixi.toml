@@ -1,0 +1,20 @@
+[project]
+authors = ["hhglory <hhglory@outlook.com>"]
+channels = ["conda-forge"]
+name = "disc"
+platforms = ["osx-arm64", "linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+
+[feature.dev.pypi-dependencies]
+mkdocs = ">=1.6.1, <2"
+mkdocs-material = ">=9.6.5, <10"
+
+[feature.dev.dependencies]
+python = ">=3.13.2,<3.14"
+
+[environments]
+dev = ["dev"]

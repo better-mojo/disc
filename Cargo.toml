@@ -1,0 +1,8 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "packages/uuid-ffi",
+]
+
+exclude = ["tmp"]

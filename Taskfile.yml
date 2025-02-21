@@ -1,0 +1,106 @@
+version: "3"
+
+#
+# sub namespace: https://taskfile.dev/#/usage?id=including-other-taskfiles
+#
+includes:
+  demo-ffi:
+    aliases: [ "df" ]
+    taskfile: ./packages/demo-ffi/
+    dir: ./packages/demo-ffi/
+    optional: true
+
+  reqwest-ffi:
+    aliases: [ "rf" ]
+    taskfile: ./packages/reqwest-ffi/
+    dir: ./packages/reqwest-ffi/
+    optional: true
+
+  hyper-ffi:
+    aliases: [ "hf" ]
+    taskfile: ./packages/hyper-ffi/
+    dir: ./packages/hyper-ffi/
+    optional: true
+
+  fastwebsockets-ffi:
+    aliases: [ "ff" ]
+    taskfile: ./packages/fastwebsockets-ffi/
+    dir: ./packages/fastwebsockets-ffi/
+    optional: true
+
+  net-ffi:
+    aliases: [ "nf" ]
+    taskfile: ./packages/net-ffi/
+    dir: ./packages/net-ffi/
+    optional: true
+
+
+#
+# global vars: https://taskfile.dev/#/usage?id=variables
+#
+vars:
+  VAR1: "some-var"
+
+# global env:
+env:
+  ENV1: testing
+  WORKSPACE: "packages/"
+
+# env file:
+dotenv:
+  - .env
+
+################################################################################################
+
+tasks:
+  pixi:
+    cmds:
+      - pixi {{.CLI_ARGS}}
+
+  docs:
+    cmds:
+      - pixi i -e=dev
+      - pixi run -e=dev mkdocs serve --open --watch=docs --watch=mkdocs.yml --dev-addr=localhost:5005
+
+  docs:deploy:
+    aliases: [ "docs:d" ]
+    cmds:
+      - pixi i -e=dev
+      - pixi run -e=dev mkdocs gh-deploy # build and create gh-pages branch
+      - git push origin gh-pages:gh-pages --force # push to public repo
+
+  dev:
+    cmds:
+      - rustup toolchain install nightly
+      - rustup toolchain list
+
+
+  ###########################################################################
+
+  quick:
+    aliases: [ "q" ]
+    cmds:
+      - task: commit
+      - task: commit
+      - git status
+      - task: push
+    ignore_error: true
+
+  commit:
+    aliases: [ "c" ]
+    cmds:
+      - git add .
+      - git commit -m "update" --no-verify
+    ignore_error: true
+
+
+  pull:
+    aliases: [ "pl" ]
+    cmds:
+      - git pull
+
+  push:
+    aliases: [ "p" ]
+    cmds:
+      - git push origin main --tags
+      - repo_url=`git remote -v | grep push | awk -F ":" '{print $2}' | awk -F ".git" '{print "https://github.com/"$1}'`; open $repo_url
