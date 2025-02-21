@@ -19,6 +19,7 @@ tasks:
     cmds:
       - cargo test --features c-headers -- generate_headers
       - cargo build
+      - open ../../target/debug
     ignore_error: true
 
   release:
@@ -26,4 +27,15 @@ tasks:
     cmds:
       - cargo test --features c-headers -- generate_headers
       - cargo build --release
+      - open ../../target/release
+    ignore_error: true
+
+
+  run:c:
+    aliases: [ "r" ]
+    cmds:
+      - task: b
+      - gcc -L ../../target/debug -l uuid_ffi  -o main  main.c  -include stdio.h # libuuid_ffi， 对应 uuid_ffi, 无需 Lib 前缀
+      - ./main
+      - rm -rf main
     ignore_error: true

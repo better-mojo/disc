@@ -71,3 +71,6 @@ build/
 
 # mkdocs
 site/
+
+# build
+main

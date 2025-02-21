@@ -1,4 +1,3 @@
-// src/lib.rs
 use safer_ffi::prelude::*;
 use uuid::Uuid;
 
@@ -11,25 +10,13 @@ pub fn rs_uuid_v4() -> char_p::Box {
 #[ffi_export]
 /// 生成新的 UUIDv4
 pub fn rs_uuid_v7() -> char_p::Box {
-    Uuid::new_v7().to_string().try_into().unwrap()
+    Uuid::now_v7().to_string().try_into().unwrap()
 }
 
 /// Frees a Rust-allocated string.
 #[ffi_export]
 fn free_rs_string(string: char_p::Box) {
     drop(string)
-}
-
-#[ffi_export]
-/// 解析字符串为 UUID（返回 0 表示成功）
-pub fn uuid_parse(input: char_p::Ref<'_>, output: &mut [u8; 16]) -> i32 {
-    match Uuid::parse_str(input.as_str()) {
-        Ok(uuid) => {
-            output.copy_from_slice(uuid.as_bytes());
-            0
-        }
-        Err(_) => -1,
-    }
 }
 
 #[ffi_export]
