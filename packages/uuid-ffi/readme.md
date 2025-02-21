@@ -7,14 +7,14 @@
 ```make
 
 # generate c headers
-task demo-ffi:gen  
+task uuid-ffi:gen  
 
   
 # build rust binary lib, and generate c headers 
-task demo-ffi:build
+task uuid-ffi:build
 
 # run main.c
-task demo-ffi:r   
+task uuid-ffi:r   
   
  
 ```
