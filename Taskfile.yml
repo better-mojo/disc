@@ -16,6 +16,12 @@ includes:
     dir: ./packages/uuid-ffi/
     optional: true
 
+  uuid-mojo:
+    aliases: [ "um" ]
+    taskfile: ./packages/uuid-mojo/
+    dir: ./packages/uuid-mojo/
+    optional: true
+
   disc-ffi:
     aliases: [ "disc:f" ]
     taskfile: ./packages/disc-ffi/
