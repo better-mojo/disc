@@ -1,0 +1,33 @@
+version: "3"
+
+tasks:
+  pixi:
+    cmds:
+      - pixi {{.CLI_ARGS}}
+
+  cargo:
+    cmds:
+      - cargo {{.CLI_ARGS}}
+
+  gen:
+    cmds:
+      - cargo clean
+      - cargo run generate-headers
+
+  build:
+    aliases: [ "b" ]
+    cmds:
+      - cargo test --features c-headers -- generate_headers
+      - cargo build --release
+    ignore_error: true
+
+
+  run:c:
+    aliases: [ "r" ]
+    cmds:
+      - task: b
+      #      - open ../../target/release
+      - gcc -L ../../target/release -l demo_ffi  -o main  main.c  # libdeomo， 对应 demo, 无需 Lib 前缀
+      - ./main
+      - rm -rf main
+    ignore_error: true
