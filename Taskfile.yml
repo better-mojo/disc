@@ -10,28 +10,16 @@ includes:
     dir: ./packages/demo-ffi/
     optional: true
 
-  reqwest-ffi:
+  uuid-ffi:
     aliases: [ "rf" ]
-    taskfile: ./packages/reqwest-ffi/
-    dir: ./packages/reqwest-ffi/
+    taskfile: ./packages/uuid-ffi/
+    dir: ./packages/uuid-ffi/
     optional: true
 
-  hyper-ffi:
-    aliases: [ "hf" ]
-    taskfile: ./packages/hyper-ffi/
-    dir: ./packages/hyper-ffi/
-    optional: true
-
-  fastwebsockets-ffi:
-    aliases: [ "ff" ]
-    taskfile: ./packages/fastwebsockets-ffi/
-    dir: ./packages/fastwebsockets-ffi/
-    optional: true
-
-  net-ffi:
+  disc-ffi:
     aliases: [ "nf" ]
-    taskfile: ./packages/net-ffi/
-    dir: ./packages/net-ffi/
+    taskfile: ./packages/disc-ffi/
+    dir: ./packages/disc-ffi/
     optional: true
 
 

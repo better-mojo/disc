@@ -1,0 +1,29 @@
+version: "3"
+
+tasks:
+  pixi:
+    cmds:
+      - pixi {{.CLI_ARGS}}
+
+  cargo:
+    cmds:
+      - cargo {{.CLI_ARGS}}
+
+  gen:
+    cmds:
+      - cargo clean
+      - cargo run generate-headers
+
+  build:
+    aliases: [ "b" ]
+    cmds:
+      - cargo test --features c-headers -- generate_headers
+      - cargo build
+    ignore_error: true
+
+  release:
+    aliases: [ "rel" ]
+    cmds:
+      - cargo test --features c-headers -- generate_headers
+      - cargo build --release
+    ignore_error: true
