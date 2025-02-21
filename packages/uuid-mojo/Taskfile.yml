@@ -1,0 +1,6 @@
+version: "3"
+
+tasks:
+  magic:
+    cmds:
+      - magic {{.CLI_ARGS}}
