@@ -50,6 +50,12 @@ alias LIBNAME = get_libname()
 alias fn_rs_uuid_v4 = fn () -> c_char_ptr
 alias fn_rs_uuid_v7 = fn () -> c_char_ptr
 alias fn_rs_free_string = fn (string: c_char_ptr) -> None
+alias fn_rs_gen_uuid_v4 = fn (
+    result: UnsafePointer[c_uint8], size: c_size_t
+) -> c_size_t
+alias fn_rs_gen_uuid_v7 = fn (
+    result: UnsafePointer[c_uint8], size: c_size_t
+) -> c_size_t
 
 
 ################################################################################
@@ -65,6 +71,12 @@ var _fn_rs_uuid_v4 = _handle.get_function[fn_rs_uuid_v4]("rs_uuid_v4")
 var _fn_rs_uuid_v7 = _handle.get_function[fn_rs_uuid_v7]("rs_uuid_v7")
 var _fn_rs_free_string = _handle.get_function[fn_rs_free_string](
     "free_rs_string"
+)
+var _fn_rs_gen_uuid_v4 = _handle.get_function[fn_rs_gen_uuid_v4](
+    "rs_gen_uuid_v4"
+)
+var _fn_rs_gen_uuid_v7 = _handle.get_function[fn_rs_gen_uuid_v7](
+    "rs_gen_uuid_v7"
 )
 
 
@@ -95,3 +107,19 @@ fn free_string(str: c_char_ptr) -> NoneType:
         return external_call["free_rs_string", NoneType](str)
     else:
         return _fn_rs_free_string(str)
+
+
+fn gen_uuid_v4(result: UnsafePointer[c_uint8], size: c_size_t) -> c_size_t:
+    @parameter
+    if is_static_build():
+        return external_call["rs_gen_uuid_v4", c_size_t](result, size)
+    else:
+        return _fn_rs_gen_uuid_v4(result, size)
+
+
+fn gen_uuid_v7(result: UnsafePointer[c_uint8], size: c_size_t) -> c_size_t:
+    @parameter
+    if is_static_build():
+        return external_call["rs_gen_uuid_v7", c_size_t](result, size)
+    else:
+        return _fn_rs_gen_uuid_v7(result, size)

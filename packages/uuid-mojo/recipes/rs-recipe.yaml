@@ -5,7 +5,7 @@
 #   - https://github.com/conda-forge/fcp-rust-feedstock/blob/main/recipe/meta.yaml#L17
 
 context:
-  version: "0.2.2" # package version
+  version: "0.2.3" # package version
   package_name: "libuuid_ffi" # package name
   package_path: "../../uuid-ffi/" # package path, TODO X: 注意是相对此文件的路径 !!!
 
