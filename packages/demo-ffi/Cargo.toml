@@ -1,14 +1,17 @@
 [package]
 name = "demo-ffi"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"  # fix for pixi
 
+
+# fix for pixi + rattler-build
+[workspace]
 
 [lib]
 crate-type = [
     "staticlib", # Ensure it gets compiled as a (static) C library
-    "cdylib", # If you want a shared/dynamic C library (advanced)
-    "lib", # For `generate-headers` and other downstream rust dependents
+    "cdylib",    # If you want a shared/dynamic C library (advanced)
+    "lib",       # For `generate-headers` and other downstream rust dependents
     "rlib",
     # such as integration `tests/`, doctests, and `examples/`
 ]

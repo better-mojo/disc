@@ -3,7 +3,7 @@
 
 context:
   version: "0.1.1"                   # package version
-  package_name: "uuid_mojo" # package name
+  package_name: "uuid" # package name
   package_path: "../src/"    # package path, TODO X: 注意是相对此文件的路径 !!!
 
 package:

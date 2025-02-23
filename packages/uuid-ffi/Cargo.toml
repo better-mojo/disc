@@ -1,15 +1,17 @@
 [package]
 name = "uuid-ffi"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"  # fix for pixi
 
+# fix for pixi + rattler-build
+[workspace]
 
 [lib]
 crate-type = [
     "staticlib", # Ensure it gets compiled as a (static) C library
-    "cdylib", # If you want a shared/dynamic C library (advanced)
-    "lib", # For `generate-headers` and other downstream rust dependents
-#    "rlib",
+    "cdylib",    # If you want a shared/dynamic C library (advanced)
+    "lib",       # For `generate-headers` and other downstream rust dependents
+    #    "rlib",
     # such as integration `tests/`, doctests, and `examples/`
 ]
 
@@ -40,5 +42,5 @@ safer-ffi = { git = "https://github.com/getditto/safer_ffi.git", features = [
 
 uuid = { version = "1.*", features = ["v4", "v7"] }
 
-[features]
-c-headers = ["safer-ffi/headers"]
+#[features]
+#c-headers = ["safer-ffi/headers"]

@@ -2,10 +2,26 @@
 authors = ["hhglory <hhglory@outlook.com>"]
 channels = ["https://conda.modular.com/max-nightly", "https://conda.modular.com/max", "https://repo.prefix.dev/modular-community", "conda-forge"]
 name = "uuid-mojo"
-platforms = ["osx-arm64"]
+platforms = ["linux-64", "linux-aarch64", "osx-arm64"]
+
 version = "0.1.0"
 
 [tasks]
+build-mojo = { cmd = "magic run -e=dev rattler-build build --recipe recipes/mojo-recipe.yaml -c https://conda.modular.com/max -c conda-forge --skip-existing=all" }
+build-rs = { cmd = "magic run -e=dev rattler-build build --recipe recipes/rs-recipe.yaml -c https://conda.modular.com/max -c conda-forge --skip-existing=all" }
+
 
 [dependencies]
 max = ">=25.2.0.dev2025022105,<26"
+
+
+[feature.dev.dependencies]
+rust = ">=1.84.0,<1.85"
+rattler-build = ">=0.36.0,<0.37"
+
+#
+# ref: https://pixi.sh/latest/features/multi_environment/#ambiguous-environment-selection
+#
+[environments]
+#default = ["default"]
+dev = ["dev"]

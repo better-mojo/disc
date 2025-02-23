@@ -3,7 +3,7 @@ resolver = "2"
 
 members = [
     "packages/demo-ffi",
-    "packages/uuid-ffi",
+    #    "packages/uuid-ffi",
 ]
 
-exclude = ["tmp"]
+exclude = ["tmp", "packages/uuid-ffi"]
