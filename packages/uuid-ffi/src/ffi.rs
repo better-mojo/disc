@@ -1,4 +1,6 @@
 use safer_ffi::prelude::*;
+use std::ffi::CString;
+use std::os::raw::c_char;
 use uuid::Uuid;
 
 #[ffi_export]
@@ -11,10 +13,39 @@ pub fn rs_uuid_v4() -> char_p::Box {
 
 #[ffi_export]
 /// 生成新的 UUIDv4
+pub fn rs_gen_uuid_v4(result: *mut u8, size: usize) -> usize {
+    let id = Uuid::new_v4().to_string();
+    println!("rust > uuid v4: {}", id);
+    let c_str = CString::new(id).unwrap();
+    let bytes = c_str.as_bytes_with_nul();
+    unsafe {
+        std::ptr::copy_nonoverlapping(bytes.as_ptr(), result as *mut u8, size.min(bytes.len()));
+    }
+
+    bytes.len()
+}
+
+#[ffi_export]
+/// 生成新的 UUIDv4
 pub fn rs_uuid_v7() -> char_p::Box {
     let id = Uuid::now_v7().to_string().try_into().unwrap();
     println!("rust > uuid v7: {}", id);
     id
+}
+
+#[ffi_export]
+/// 生成新的 UUIDv7
+pub fn rs_gen_uuid_v7(result: *mut u8, size: usize) -> usize {
+    let id = Uuid::now_v7().to_string();
+    println!("rust > uuid v7: {}", id);
+    let c_str = CString::new(id).unwrap();
+    let bytes = c_str.as_bytes_with_nul();
+
+    unsafe {
+        std::ptr::copy_nonoverlapping(bytes.as_ptr(), result as *mut u8, size.min(bytes.len()));
+    }
+
+    bytes.len()
 }
 
 /// Frees a Rust-allocated string.

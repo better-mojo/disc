@@ -20,6 +20,26 @@ void
 free_rs_string (
     char * string);
 
+
+#include <stddef.h>
+#include <stdint.h>
+
+/** \brief
+ *  生成新的 UUIDv4
+ */
+size_t
+rs_gen_uuid_v4 (
+    uint8_t * result,
+    size_t size);
+
+/** \brief
+ *  生成新的 UUIDv7
+ */
+size_t
+rs_gen_uuid_v7 (
+    uint8_t * result,
+    size_t size);
+
 /** \brief
  *  生成新的 UUIDv4
  */
@@ -31,10 +51,6 @@ rs_uuid_v4 (void);
  */
 char *
 rs_uuid_v7 (void);
-
-
-#include <stddef.h>
-#include <stdint.h>
 
 typedef struct {
     uint8_t idx[16];

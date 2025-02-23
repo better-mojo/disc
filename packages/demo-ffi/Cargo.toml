@@ -5,7 +5,7 @@ edition = "2021"  # fix for pixi
 
 
 # fix for pixi + rattler-build
-[workspace]
+# [workspace]
 
 [lib]
 crate-type = [
