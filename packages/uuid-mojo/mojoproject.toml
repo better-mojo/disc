@@ -19,7 +19,7 @@ build-rs = { cmd = "magic run -e=dev rattler-build build --recipe recipes/rs-rec
 
 [dependencies]
 max = ">=25.1.1,<26"
-libuuid_ffi = ">=0.2.1,<0.3"
+libuuid_ffi = ">=0.2.2,<0.3"
 
 [feature.dev.dependencies]
 rust = ">=1.84.0,<1.85"
