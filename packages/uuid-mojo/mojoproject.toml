@@ -1,7 +1,6 @@
 [project]
 authors = ["hhglory <hhglory@outlook.com>"]
 channels = [
-    "https://conda.modular.com/max-nightly",
     "https://conda.modular.com/max",
     "https://repo.prefix.dev/modular-community",
     "conda-forge",
@@ -19,9 +18,8 @@ build-rs = { cmd = "magic run -e=dev rattler-build build --recipe recipes/rs-rec
 
 
 [dependencies]
-max = ">=25.2.0.dev2025022105,<26"
+max = ">=25.1.1,<26"
 libuuid_ffi = ">=0.2.1,<0.3"
-
 
 [feature.dev.dependencies]
 rust = ">=1.84.0,<1.85"

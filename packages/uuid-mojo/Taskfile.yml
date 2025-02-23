@@ -5,6 +5,12 @@ tasks:
     cmds:
       - magic {{.CLI_ARGS}}
 
+  install:
+    aliases: ["i"]
+    cmds:
+      - magic install
+      - magic install -e=dev
+
   release:rust:
     aliases: ["rel:rs", "rel:ffi"]
     cmds:

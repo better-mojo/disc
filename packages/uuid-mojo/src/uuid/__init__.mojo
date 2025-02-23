@@ -1,7 +1,7 @@
-from sys.ffi import DLHandle, c_char, c_size_t
 from memory import UnsafePointer
 from sys.param_env import is_defined
 from sys import os_is_macos
+from sys.ffi import DLHandle, c_char, c_size_t, external_call
 
 
 alias c_void = UInt8
@@ -24,6 +24,7 @@ fn is_static_build() -> Bool:
     Returns:
         Bool: True if the build is in debug mode and False otherwise.
     """
+
     @parameter
     if is_defined["IS_STATIC_BUILD"]():
         return True
@@ -39,6 +40,7 @@ fn get_libname() -> StringLiteral:
         return "libuuid_ffi.dylib"
     else:
         return "libuuid_ffi.so"
+
 
 alias LIBNAME = get_libname()
 
@@ -60,7 +62,9 @@ var _handle: DLHandle = DLHandle(LIBNAME)
 #
 var _fn_rs_uuid_v4 = _handle.get_function[fn_rs_uuid_v4]("rs_uuid_v4")
 var _fn_rs_uuid_v7 = _handle.get_function[fn_rs_uuid_v7]("rs_uuid_v7")
-var _fn_rs_free_string = _handle.get_function[fn_rs_free_string]("rs_free_string")
+var _fn_rs_free_string = _handle.get_function[fn_rs_free_string](
+    "rs_free_string"
+)
 
 
 ################################################################################
@@ -90,4 +94,3 @@ fn free_string(string: c_char_ptr) -> None:
         return external_call["rs_free_string", NoneType](string)
     else:
         return _fn_rs_free_string(string)
-
