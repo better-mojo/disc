@@ -21,7 +21,7 @@ pub fn rs_uuid_v7() -> char_p::Box {
 #[ffi_export]
 fn free_rs_string(string: char_p::Box) {
     let str = string.to_str();
-    println!("rust > freeing string: {}", str);
+    println!("rust > freeing string: {:?}, raw: {:?}", str, string);
     drop(string)
 }
 

@@ -2,6 +2,7 @@ from memory import UnsafePointer
 from sys.param_env import is_defined
 from sys import os_is_macos
 from sys.ffi import DLHandle, c_char, c_size_t, external_call
+from memory import UnsafePointer, memcpy
 
 
 alias c_void = UInt8
@@ -88,9 +89,9 @@ fn uuid_v7() -> c_char_ptr:
         return _fn_rs_uuid_v7()
 
 
-fn free_string(string: c_char_ptr) -> None:
+fn free_string(str: c_char_ptr) -> NoneType:
     @parameter
     if is_static_build():
-        return external_call["free_rs_string", NoneType](string)
+        return external_call["free_rs_string", NoneType](str)
     else:
-        return _fn_rs_free_string(string)
+        return _fn_rs_free_string(str)
