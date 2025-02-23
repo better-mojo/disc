@@ -1,5 +1,9 @@
 from memory import UnsafePointer, memcpy
 from sys.ffi import DLHandle, c_char, c_size_t, external_call
+from memory import UnsafePointer, memcpy, stack_allocation
+from sys.ffi import DLHandle, c_char, c_size_t
+from utils import StringSlice
+
 
 import . internal as inner
 
@@ -29,28 +33,29 @@ fn free_string(str: c_char_ptr) -> None:
 
 fn gen_uuid_v4() -> String:
     # 使用 gen_uuid_v4 和 gen_uuid_v7
-    var buf: UnsafePointer[c_uint8] = UnsafePointer[c_uint8].alloc(37)
+    # var buf: UnsafePointer[c_uint8] = UnsafePointer[c_uint8].alloc(37)
 
-    var raw = inner.gen_uuid_v4(buf, 37)
-    print(raw)
+    alias buf_size = 37
+    # 栈上分配, 无需释放
+    var buf = stack_allocation[buf_size, UInt8]()
 
-    str = String(buf)
-    print(str)
+    # 调用 rust ffi 函数
+    var size = inner.gen_uuid_v4(buf, buf_size)
 
-    # 释放分配的内存
-    buf.free()
+    # todo x: 转换方法!!!
+    var str = String(StringSlice[__origin_of(buf)](ptr=buf, length=UInt(size)))
     return str
 
 
 fn gen_uuid_v7() -> String:
-    # 使用 gen_uuid_v4 和 gen_uuid_v7
-    var buf: UnsafePointer[c_uint8] = UnsafePointer[c_uint8].alloc(37)
+    # 分配大小
+    alias buf_size = 37
+    # 栈上分配, 无需释放
+    var buf = stack_allocation[buf_size, UInt8]()
 
-    var raw = inner.gen_uuid_v7(buf, 37)
-    print(raw)
+    # 调用 rust ffi 函数
+    var size = inner.gen_uuid_v7(buf, buf_size)
 
-    str = String(buf)
-    print(str)
-
-    buf.free()
+    # todo x: 转换方法!!!
+    var str = String(StringSlice[__origin_of(buf)](ptr=buf, length=UInt(size)))
     return str
