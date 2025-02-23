@@ -9,5 +9,5 @@ def test_uuid():
     # uuid.free_string(id)
 
 
-fn main():
+fn main() raises:
     test_uuid()

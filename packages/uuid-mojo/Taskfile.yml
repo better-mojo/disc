@@ -11,6 +11,11 @@ tasks:
       - magic install
       - magic install -e=dev
 
+  run:
+    aliases: ["r"]
+    cmds:
+      - magic run mojo run {{.CLI_ARGS}}
+
   release:rust:
     aliases: ["rel:rs", "rel:ffi"]
     cmds:
