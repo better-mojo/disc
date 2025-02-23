@@ -63,7 +63,7 @@ var _handle: DLHandle = DLHandle(LIBNAME)
 var _fn_rs_uuid_v4 = _handle.get_function[fn_rs_uuid_v4]("rs_uuid_v4")
 var _fn_rs_uuid_v7 = _handle.get_function[fn_rs_uuid_v7]("rs_uuid_v7")
 var _fn_rs_free_string = _handle.get_function[fn_rs_free_string](
-    "rs_free_string"
+    "free_rs_string"
 )
 
 
@@ -91,6 +91,6 @@ fn uuid_v7() -> c_char_ptr:
 fn free_string(string: c_char_ptr) -> None:
     @parameter
     if is_static_build():
-        return external_call["rs_free_string", NoneType](string)
+        return external_call["free_rs_string", NoneType](string)
     else:
         return _fn_rs_free_string(string)

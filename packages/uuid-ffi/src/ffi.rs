@@ -4,18 +4,24 @@ use uuid::Uuid;
 #[ffi_export]
 /// 生成新的 UUIDv4
 pub fn rs_uuid_v4() -> char_p::Box {
-    Uuid::new_v4().to_string().try_into().unwrap()
+    let id = Uuid::new_v4().to_string().try_into().unwrap();
+    println!("uuid v4: {}", id);
+    id
 }
 
 #[ffi_export]
 /// 生成新的 UUIDv4
 pub fn rs_uuid_v7() -> char_p::Box {
-    Uuid::now_v7().to_string().try_into().unwrap()
+    let id =  Uuid::now_v7().to_string().try_into().unwrap();
+    println!("uuid v7: {}", id);
+    id
 }
 
 /// Frees a Rust-allocated string.
 #[ffi_export]
 fn free_rs_string(string: char_p::Box) {
+    let str = string.to_str();
+    println!("freeing string: {}", str);
     drop(string)
 }
 
