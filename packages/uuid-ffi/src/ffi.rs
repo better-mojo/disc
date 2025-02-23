@@ -14,15 +14,24 @@ pub fn rs_uuid_v4() -> char_p::Box {
 #[ffi_export]
 /// 生成新的 UUIDv4
 pub fn rs_gen_uuid_v4(result: *mut u8, size: usize) -> usize {
+    const UUID_LEN: usize = 36; // UUID 字符串长度
+    const UUID_LEN_WITH_NULL: usize = UUID_LEN + 1; // 包括空字符
+
+    if size < UUID_LEN_WITH_NULL {
+        eprintln!("rust > buffer size(min = 37) too small for UUIDv4");
+        return 0; // 返回错误码表示缓冲区太小
+    }
+
     let id = Uuid::new_v4().to_string();
     println!("rust > uuid v4: {}", id);
     let c_str = CString::new(id).unwrap();
     let bytes = c_str.as_bytes_with_nul();
+
     unsafe {
-        std::ptr::copy_nonoverlapping(bytes.as_ptr(), result as *mut u8, size.min(bytes.len()));
+        std::ptr::copy_nonoverlapping(bytes.as_ptr(), result, UUID_LEN_WITH_NULL);
     }
 
-    bytes.len()
+    UUID_LEN // 返回实际写入的字节数（不包括空字符）
 }
 
 #[ffi_export]
@@ -36,16 +45,24 @@ pub fn rs_uuid_v7() -> char_p::Box {
 #[ffi_export]
 /// 生成新的 UUIDv7
 pub fn rs_gen_uuid_v7(result: *mut u8, size: usize) -> usize {
+    const UUID_LEN: usize = 36; // UUID 字符串长度
+    const UUID_LEN_WITH_NULL: usize = UUID_LEN + 1; // 包括空字符
+
+    if size < UUID_LEN_WITH_NULL {
+        eprintln!("rust > buffer size(min = 37) too small for UUIDv7");
+        return 0; // 返回错误码表示缓冲区太小
+    }
+
     let id = Uuid::now_v7().to_string();
     println!("rust > uuid v7: {}", id);
     let c_str = CString::new(id).unwrap();
     let bytes = c_str.as_bytes_with_nul();
 
     unsafe {
-        std::ptr::copy_nonoverlapping(bytes.as_ptr(), result as *mut u8, size.min(bytes.len()));
+        std::ptr::copy_nonoverlapping(bytes.as_ptr(), result, UUID_LEN_WITH_NULL);
     }
 
-    bytes.len()
+    UUID_LEN // 返回实际写入的字节数（不包括空字符）
 }
 
 /// Frees a Rust-allocated string.
