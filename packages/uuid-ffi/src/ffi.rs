@@ -5,15 +5,15 @@ use uuid::Uuid;
 /// 生成新的 UUIDv4
 pub fn rs_uuid_v4() -> char_p::Box {
     let id = Uuid::new_v4().to_string().try_into().unwrap();
-    println!("uuid v4: {}", id);
+    println!("rust > uuid v4: {}", id);
     id
 }
 
 #[ffi_export]
 /// 生成新的 UUIDv4
 pub fn rs_uuid_v7() -> char_p::Box {
-    let id =  Uuid::now_v7().to_string().try_into().unwrap();
-    println!("uuid v7: {}", id);
+    let id = Uuid::now_v7().to_string().try_into().unwrap();
+    println!("rust > uuid v7: {}", id);
     id
 }
 
@@ -21,7 +21,7 @@ pub fn rs_uuid_v7() -> char_p::Box {
 #[ffi_export]
 fn free_rs_string(string: char_p::Box) {
     let str = string.to_str();
-    println!("freeing string: {}", str);
+    println!("rust > freeing string: {}", str);
     drop(string)
 }
 

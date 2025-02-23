@@ -15,7 +15,7 @@ tasks:
       - cargo run generate-headers
 
   build:
-    aliases: [ "b" ]
+    aliases: ["b"]
     cmds:
       - cargo test --features c-headers -- generate_headers
       - cargo build
@@ -23,19 +23,19 @@ tasks:
     ignore_error: true
 
   release:
-    aliases: [ "rel" ]
+    aliases: ["rel"]
     cmds:
       - cargo test --features c-headers -- generate_headers
       - cargo build --release
       - open ../../target/release
     ignore_error: true
 
-
   run:c:
-    aliases: [ "r" ]
+    aliases: ["r"]
     cmds:
       - task: b
-      - gcc -L ../../target/debug -l uuid_ffi  -o main  main.c  -include stdio.h # libuuid_ffi， 对应 uuid_ffi, 无需 Lib 前缀
+      # - gcc -L ../../target/debug -l uuid_ffi  -o main  main.c  -include stdio.h # libuuid_ffi， 对应 uuid_ffi, 无需 Lib 前缀
+      - gcc -L ./target/debug -l uuid_ffi  -o main  main.c  -include stdio.h # libuuid_ffi， 对应 uuid_ffi, 无需 Lib 前缀
       - ./main
       - rm -rf main
     ignore_error: true
