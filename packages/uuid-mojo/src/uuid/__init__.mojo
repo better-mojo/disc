@@ -25,7 +25,7 @@ fn uuid_v4() -> String:
     """Generate uuid v4.
     ref:
         - https://github.com/modular/mojo/blob/369aa88490d48c8fc96e5fa910bc49c171fcb2a5/stdlib/src/pwd/_linux.mojo#L36
-
+        - https://github.com/modular/mojo/blob/369aa88490d48c8fc96e5fa910bc49c171fcb2a5/examples/life/gridv2.mojo#L38
     Returns:
         String: uuid.v4().
     """
