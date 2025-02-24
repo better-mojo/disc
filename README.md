@@ -30,7 +30,7 @@
 | ✅ [uuid-mojo](./packages/uuid-mojo) | uuid mojo   |
 
 
-### uuid
+### 🔥 uuid
 
 ```ruby
 # add rust(ffi) package
