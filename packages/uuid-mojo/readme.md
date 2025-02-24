@@ -2,7 +2,51 @@
 
 ## Usage
 
-- TODO
+
+### add package
+
+- add channels to `mojoproject.toml`
+
+```ruby
+
+[project]
+channels = [
+    "conda-forge", 
+    "https://conda.modular.com/max", 
+    "https://repo.prefix.dev/better-ffi",  
+    "https://repo.prefix.dev/better-mojo",
+ ]
+
+```
+
+- or, use `magic command` to add channels
+
+```ruby
+
+magic project channel add "https://repo.prefix.dev/better-ffi" 
+
+magic project channel add "https://repo.prefix.dev/better-mojo" 
+
+```
+
+
+- add package to `mojoproject.toml`
+
+```ruby
+
+# add rust(ffi) package
+magic add libuuid_ffi
+
+
+# add mojo package
+magic add uuid_mojo
+
+```
+
+
+## Example
+
+- `main.mojo`
 
 
 ```python
@@ -50,47 +94,6 @@ b94423df-2c6e-4aa8-a895-7e0ea9f8dac5
 
 ```
 
-
-
-### add package
-
-- add channels to `mojoproject.toml`
-
-```ruby
-
-[project]
-channels = [
-    "conda-forge", 
-    "https://conda.modular.com/max", 
-    "https://repo.prefix.dev/better-ffi",  
-    "https://repo.prefix.dev/better-mojo",
- ]
-
-```
-
-- or, use `magic command` to add channels
-
-```ruby
-
-magic project channel add "https://repo.prefix.dev/better-ffi" 
-
-magic project channel add "https://repo.prefix.dev/better-mojo" 
-
-```
-
-
-- add package to `mojoproject.toml`
-
-```ruby
-
-# add rust(ffi) package
-magic add libuuid_ffi
-
-
-# add mojo package
-magic add uuid_mojo
-
-```
 
 
 
