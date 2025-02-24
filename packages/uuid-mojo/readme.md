@@ -2,10 +2,20 @@
 
 ## Usage
 
+### package hosted
+
+> rust ffi library
+
+- ✅ https://prefix.dev/channels/better-ffi/packages/libuuid_ffi
+
+> mojo package
+
+- ✅ https://prefix.dev/channels/better-mojo/packages/uuid
+
 
 ### add package
 
-- add channels to `mojoproject.toml`
+- ✅ add channels to `mojoproject.toml`
 
 ```ruby
 
@@ -24,29 +34,26 @@ channels = [
 ```ruby
 
 magic project channel add "https://repo.prefix.dev/better-ffi" 
-
 magic project channel add "https://repo.prefix.dev/better-mojo" 
 
 ```
 
 
-- add package to `mojoproject.toml`
+- ✅ add package to `mojoproject.toml`
 
 ```ruby
-
 # add rust(ffi) package
 magic add libuuid_ffi
 
-
 # add mojo package
-magic add uuid_mojo
+magic add uuid
 
 ```
 
 
 ## Example
 
-- `main.mojo`
+- ✅ `main.mojo`
 
 
 ```python
@@ -77,7 +84,7 @@ fn main() raises:
 
 ```
 
-- output:
+- ✅ output:
 
 ```python
 rust > uuid v4: d688553f-bfab-424c-9d16-61646b8ce4d7
@@ -102,16 +109,18 @@ b94423df-2c6e-4aa8-a895-7e0ea9f8dac5
 
 
 ```ruby
-
-# add prefix.dev channels
-task um:magic -- project channel add "https://repo.prefix.dev/better-ffi" 
-
-# add requirements
-task um:magic -- add libuuid_ffi
-
 # install
 task um:magic -- i
 
+# run example
+task um:run -- src/main.mojo
 
+# release
+task um:release:rust
+task um:release:mojo
+
+# publish package
+task um:publish:rust
+task um:publish:mojo
 
 ```
