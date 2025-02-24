@@ -2,15 +2,17 @@ import uuid
 
 
 def test_uuid():
-    # var id = uuid.uuid_v4()
-    # var id2 = uuid.uuid_v7()
-    # print(id)
-    # print(id2)
-    # uuid.free_string(id)
-    # uuid.free_string(id2)
+    # implement style 1:
+    var id = uuid.uuid_v4()  # auto free memory
+    var id2 = uuid.uuid_v7()  # auto free memory
 
+    # implement style 2:
     var id3 = uuid.gen_uuid_v4()
-    var id4 = uuid.gen_uuid_v7()
+    var id4 = uuid.gen_uuid_v7()  # auto free memory
+
+    print(id)
+    print(id2)
+
     print(id3)
     print(id4)
 

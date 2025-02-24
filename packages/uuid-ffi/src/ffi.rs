@@ -73,7 +73,7 @@ pub fn rs_gen_uuid_v7(result: *mut u8, size: usize) -> usize {
 #[ffi_export]
 fn free_rs_string(string: char_p::Box) {
     let str = string.to_str();
-    println!("rust > freeing string: {:?}, raw: {:?}", str, string);
+    println!("rust > freeing string: {:?}", str);
     drop(string)
 }
 

@@ -1,7 +1,5 @@
-from memory import UnsafePointer, memcpy
-from sys.ffi import DLHandle, c_char, c_size_t, external_call
 from memory import UnsafePointer, memcpy, stack_allocation
-from sys.ffi import DLHandle, c_char, c_size_t
+from sys.ffi import DLHandle, c_char, c_size_t, external_call
 from utils import StringSlice
 
 
@@ -19,18 +17,68 @@ alias c_char_ptr = UnsafePointer[c_char]
 alias c_void_ptr = UnsafePointer[c_void]
 
 
-fn uuid_v4() -> c_char_ptr:
-    return inner.uuid_v4()
+################################################################
 
 
-fn uuid_v7() -> c_char_ptr:
-    return inner.uuid_v7()
+# api style 1: c_char_ptr + free function
+fn uuid_v4() -> String:
+    """Generate uuid v4.
+    ref:
+        - https://github.com/modular/mojo/blob/369aa88490d48c8fc96e5fa910bc49c171fcb2a5/stdlib/src/pwd/_linux.mojo#L36
+
+    Returns:
+        String: uuid.v4().
+    """
+    alias buf_size = 37
+
+    var buf: UnsafePointer[c_char] = UnsafePointer[c_char].alloc(buf_size)
+
+    # call rust ffi function
+    var raw = inner.uuid_v4()
+
+    # memcpy
+    memcpy(dest=buf, src=raw, count=buf_size)
+
+    # convert to string
+    var str = String(
+        StringSlice[__origin_of(buf)](unsafe_from_utf8_cstr_ptr=buf)
+    )
+
+    # free memory
+    inner.free_string(raw)
+    buf.free()
+    return str
 
 
-fn free_string(str: c_char_ptr) -> None:
-    inner.free_string(str)
+# api style 1: c_char_ptr + free function
+fn uuid_v7() -> String:
+    alias buf_size = 37
+
+    var buf: UnsafePointer[c_char] = UnsafePointer[c_char].alloc(buf_size)
+
+    # call rust ffi function
+    var raw = inner.uuid_v7()
+
+    # memcpy
+    memcpy(dest=buf, src=raw, count=buf_size)
+
+    # convert to string
+    var str = String(
+        StringSlice[__origin_of(buf)](unsafe_from_utf8_cstr_ptr=buf)
+    )
+
+    # free memory
+    inner.free_string(raw)
+    buf.free()
+    return str
 
 
+################################################################
+
+
+#
+# api style 2: pre allocated buffer + stack allocation
+#
 fn gen_uuid_v4() -> String:
     """Generate a random uuid v4.
     use stack allocation.
@@ -51,6 +99,9 @@ fn gen_uuid_v4() -> String:
     return str
 
 
+#
+# api style 2: pre allocated buffer + heap allocation
+#
 fn gen_uuid_v7() -> String:
     """Generate a random uuid v7.
     use heap allocation.
