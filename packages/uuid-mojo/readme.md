@@ -53,7 +53,10 @@ magic add uuid
 
 ## Example
 
-- ✅ `main.mojo`
+
+### simple example
+
+- ✅ [src/main.mojo](src/main.mojo)
 
 
 ```python
@@ -102,9 +105,10 @@ b94423df-2c6e-4aa8-a895-7e0ea9f8dac5
 ```
 
 
+### project example
 
-
-
+- ✅ [examples/try-uuid](./examples/try-uuid)
+  ❌ has some issues, need to fix
 ## Development
 
 
