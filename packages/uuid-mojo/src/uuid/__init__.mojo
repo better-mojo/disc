@@ -5,7 +5,7 @@ from sys.ffi import DLHandle, c_char, c_size_t
 from utils import StringSlice
 
 
-import . internal as inner
+import . _uuid as inner
 
 
 alias c_void = UInt8
