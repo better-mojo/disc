@@ -32,30 +32,44 @@ fn free_string(str: c_char_ptr) -> None:
 
 
 fn gen_uuid_v4() -> String:
-    # 使用 gen_uuid_v4 和 gen_uuid_v7
-    # var buf: UnsafePointer[c_uint8] = UnsafePointer[c_uint8].alloc(37)
-
+    """Generate a random uuid v4.
+    use stack allocation.
+    """
     alias buf_size = 37
-    # 栈上分配, 无需释放
+
+    # stack allocation
     var buf = stack_allocation[buf_size, UInt8]()
 
-    # 调用 rust ffi 函数
+    # heap allocation
+    # var buf: UnsafePointer[c_uint8] = UnsafePointer[c_uint8].alloc(buf_size)
+
+    # call rust ffi function
     var size = inner.gen_uuid_v4(buf, buf_size)
 
-    # todo x: 转换方法!!!
+    # convert to string
     var str = String(StringSlice[__origin_of(buf)](ptr=buf, length=UInt(size)))
     return str
 
 
 fn gen_uuid_v7() -> String:
-    # 分配大小
+    """Generate a random uuid v7.
+    use heap allocation.
+    """
+    #
     alias buf_size = 37
-    # 栈上分配, 无需释放
-    var buf = stack_allocation[buf_size, UInt8]()
 
-    # 调用 rust ffi 函数
+    # stack allocation
+    # var buf = stack_allocation[buf_size, UInt8]()
+
+    # heap allocation
+    var buf: UnsafePointer[c_uint8] = UnsafePointer[c_uint8].alloc(buf_size)
+
+    # call rust ffi function
     var size = inner.gen_uuid_v7(buf, buf_size)
 
-    # todo x: 转换方法!!!
+    # convert to string
     var str = String(StringSlice[__origin_of(buf)](ptr=buf, length=UInt(size)))
+
+    # free memory
+    buf.free()
     return str
