@@ -24,10 +24,10 @@
 
 ## Packages
 
-| Package                             | Description |
-| ----------------------------------- | ----------- |
-| ✅ [uuid-ffi](./packages/uuid-ffi)   | uuid-rs FFI |
-| ✅ [uuid-mojo](./packages/uuid-mojo) | uuid mojo   |
+| Package                             | Description | Host                                                        |
+| ----------------------------------- | ----------- | ----------------------------------------------------------- |
+| ✅ [uuid-ffi](./packages/uuid-ffi)   | uuid-rs FFI | https://prefix.dev/channels/better-ffi/packages/libuuid_ffi |
+| ✅ [uuid-mojo](./packages/uuid-mojo) | uuid mojo   | https://prefix.dev/channels/better-mojo/packages/uuid       |
 
 
 ### 🔥 uuid
@@ -71,6 +71,7 @@ fn main() raises:
 
 ## Reference
 
+
 [language-shield]: https://img.shields.io/badge/Mojo%F0%9F%94%A5-25.2-orange
 
 [license-shield]: https://img.shields.io/github/license/better-mojo/jojo?logo=github
@@ -84,6 +85,14 @@ fn main() raises:
 [uuid-ffi]: https://prefix.dev/channels/better-ffi/packages/libuuid_ffi
 
 [uuid-mojo]: https://prefix.dev/channels/better-mojo/packages/uuid_mojo
+
+
+
+
+> rust:
+
+- https://github.com/uuid-rs/uuid
+
 
 
 
