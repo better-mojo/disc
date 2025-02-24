@@ -18,16 +18,56 @@
   </p>
 </div>
 
-## Packages
-
-| Package                           | Description |
-|-----------------------------------|-------------|
-| [uuid-ffi](./packages/uuid-ffi)   | uuid-rs FFI |
-| [uuid-mojo](./packages/uuid-mojo) | uuid mojo   |
-
 ## Docs
 
 - https://better-mojo.github.io/disc/
+
+## Packages
+
+| Package                             | Description |
+| ----------------------------------- | ----------- |
+| ✅ [uuid-ffi](./packages/uuid-ffi)   | uuid-rs FFI |
+| ✅ [uuid-mojo](./packages/uuid-mojo) | uuid mojo   |
+
+
+### uuid
+
+```ruby
+# add rust(ffi) package
+magic add libuuid_ffi  # add channel first: "https://repo.prefix.dev/better-ffi" 
+
+# add mojo package
+magic add uuid  # add channel first: "https://repo.prefix.dev/better-mojo" 
+```
+
+- example
+
+```python
+import uuid
+
+
+def test_uuid():
+    # implement style 1:
+    var id = uuid.uuid_v4()  # auto free memory
+    var id2 = uuid.uuid_v7()  # auto free memory
+
+    # implement style 2:
+    var id3 = uuid.gen_uuid_v4()
+    var id4 = uuid.gen_uuid_v7()  # auto free memory
+
+    print(id)
+    print(id2)
+
+    print(id3)
+    print(id4)
+
+
+fn main() raises:
+    test_uuid()
+```
+
+
+
 
 ## Reference
 
