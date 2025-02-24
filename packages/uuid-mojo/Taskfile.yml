@@ -31,8 +31,8 @@ tasks:
   #
   # ref: https://taskfile.dev/usage/#looping-over-variables
   #
-  publish:
-    aliases: ["up", "pub", "pub:auto"]
+  publish:mojo:
+    aliases: ["up", "up:mojo", "pub", "pub:auto"]
     vars:
       UP_PKGS:
         sh: find . -name "*.conda" -type f
