@@ -68,6 +68,7 @@ output/
 # mojo env
 .magic
 build/
+*.mojopkg
 
 # mkdocs
 site/
