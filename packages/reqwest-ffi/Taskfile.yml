@@ -39,7 +39,7 @@ tasks:
     aliases: ["rc"]
     cmds:
       - task: b
-      - gcc -L ./target/debug -l uuid_ffi  -o main  main.c  -include stdio.h # libuuid_ffi， 对应 uuid_ffi, 无需 Lib 前缀
+      - gcc -L ./target/debug -l reqwest_ffi  -o main  main.c  -include stdio.h # 对应 libreqwest_ffi
       - ./main
       - rm -rf main
     ignore_error: true

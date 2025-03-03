@@ -13,6 +13,9 @@
 extern "C" {
 #endif
 
+/** <No documentation available> */
+typedef struct HttpRequest HttpRequest_t;
+
 
 #include <stddef.h>
 #include <stdint.h>
@@ -72,15 +75,20 @@ enum Method {
 Method_t;
 
 /** <No documentation available> */
+HttpRequest_t *
+new_http_request (
+    Method_t method,
+    char const * url,
+    HttpVersion_t version,
+    char const * body);
+
+/** <No documentation available> */
 typedef struct HttpResponse HttpResponse_t;
 
 /** <No documentation available> */
 void
 rs_http_resp_free (
     HttpResponse_t * resp);
-
-/** <No documentation available> */
-typedef struct HttpRequest HttpRequest_t;
 
 /** <No documentation available> */
 HttpResponse_t *

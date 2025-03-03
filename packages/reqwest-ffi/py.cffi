@@ -7,6 +7,8 @@
  *                                         *
  *******************************************/
 
+typedef ... HttpRequest_t;
+
 
 #include <stddef.h>
 #include <stdint.h>
@@ -32,15 +34,19 @@ typedef enum Method {
     METHOD_PATCH,
 } Method_t;
 
+HttpRequest_t *
+new_http_request (
+    Method_t method,
+    char const * url,
+    HttpVersion_t version,
+    char const * body);
+
 /** <No documentation available> */
 typedef struct HttpResponse HttpResponse_t;
 
 void
 rs_http_resp_free (
     HttpResponse_t * resp);
-
-/** <No documentation available> */
-typedef struct HttpRequest HttpRequest_t;
 
 HttpResponse_t *
 rs_send_request (

@@ -75,6 +75,7 @@ impl From<http::Version> for HttpVersion {
 }
 
 // http request
+#[ffi_export]
 #[derive_ReprC]
 #[repr(opaque)]
 struct HttpRequest {
@@ -105,6 +106,16 @@ impl HttpRequest {
     }
 }
 
+#[ffi_export]
+fn new_http_request(
+    method: Method,
+    url: char_p::Ref<'_>,
+    version: HttpVersion,
+    body: char_p::Ref<'_>,
+) -> repr_c::Box<HttpRequest> {
+    Box::new(HttpRequest::new(method, url, version, body)).into()
+}
+
 #[derive_ReprC]
 #[repr(opaque)]
 struct HttpResponse {
@@ -131,6 +142,8 @@ pub fn rs_send_request(req: &HttpRequest) -> repr_c::Box<HttpResponse> {
         .body(req.body.clone())
         .send()
         .unwrap();
+
+    println!("rs > send request: {:?}", resp);
 
     Box::new(HttpResponse::new(resp)).into()
 }
