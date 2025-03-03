@@ -5,29 +5,34 @@ version: "3"
 #
 includes:
   demo-ffi:
-    aliases: [ "df" ]
+    aliases: ["df"]
     taskfile: ./packages/demo-ffi/
     dir: ./packages/demo-ffi/
     optional: true
 
   uuid-ffi:
-    aliases: [ "uf" ]
+    aliases: ["uf"]
     taskfile: ./packages/uuid-ffi/
     dir: ./packages/uuid-ffi/
     optional: true
 
   uuid-mojo:
-    aliases: [ "um" ]
+    aliases: ["um"]
     taskfile: ./packages/uuid-mojo/
     dir: ./packages/uuid-mojo/
     optional: true
 
+  hyper-ffi:
+    aliases: ["hf"]
+    taskfile: ./packages/hyper-ffi/
+    dir: ./packages/hyper-ffi/
+    optional: true
+
   disc-ffi:
-    aliases: [ "disc:f" ]
+    aliases: ["disc:f"]
     taskfile: ./packages/disc-ffi/
     dir: ./packages/disc-ffi/
     optional: true
-
 
 #
 # global vars: https://taskfile.dev/#/usage?id=variables
@@ -57,7 +62,7 @@ tasks:
       - pixi run -e=dev mkdocs serve --open --watch=docs --watch=mkdocs.yml --dev-addr=localhost:5005
 
   docs:deploy:
-    aliases: [ "docs:d" ]
+    aliases: ["docs:d"]
     cmds:
       - pixi i -e=dev
       - pixi run -e=dev mkdocs gh-deploy # build and create gh-pages branch
@@ -68,11 +73,10 @@ tasks:
       - rustup toolchain install nightly
       - rustup toolchain list
 
-
   ###########################################################################
 
   quick:
-    aliases: [ "q" ]
+    aliases: ["q"]
     cmds:
       - task: commit
       - task: commit
@@ -81,20 +85,19 @@ tasks:
     ignore_error: true
 
   commit:
-    aliases: [ "c" ]
+    aliases: ["c"]
     cmds:
       - git add .
       - git commit -m "update" --no-verify
     ignore_error: true
 
-
   pull:
-    aliases: [ "pl" ]
+    aliases: ["pl"]
     cmds:
       - git pull
 
   push:
-    aliases: [ "p" ]
+    aliases: ["p"]
     cmds:
       - git push origin main --tags
       - repo_url=`git remote -v | grep push | awk -F ":" '{print $2}' | awk -F ".git" '{print "https://github.com/"$1}'`; open $repo_url

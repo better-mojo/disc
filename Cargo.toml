@@ -1,9 +1,6 @@
 [workspace]
 resolver = "2"
 
-members = [
-    "packages/demo-ffi",
-    #    "packages/uuid-ffi",
-]
+members = ["packages/demo-ffi"]
 
-exclude = ["tmp", "packages/uuid-ffi"]
+exclude = ["tmp", "packages/uuid-ffi", "packages/hyper-ffi"]

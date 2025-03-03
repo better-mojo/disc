@@ -1,0 +1,38 @@
+[package]
+name = "hyper-ffi"
+version = "0.1.0"
+edition = "2024"
+
+# fix for pixi + rattler-build
+[workspace]
+
+[lib]
+crate-type = [
+    "staticlib", # Ensure it gets compiled as a (static) C library
+    "cdylib",    # If you want a shared/dynamic C library (advanced)
+    "lib",       # For `generate-headers` and other downstream rust dependents
+    #    "rlib",
+    # such as integration `tests/`, doctests, and `examples/`
+]
+
+
+# hyper client
+[[bin]]
+name = "c01"
+path = "examples/client/try01.rs"
+
+# hyper server
+[[bin]]
+name = "s01"
+path = "examples/server/try01.rs"
+
+
+[dependencies]
+safer-ffi = { git = "https://github.com/getditto/safer_ffi.git", features = [
+    "python-headers",
+] }
+
+hyper = { version = "1", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
+http-body-util = "0.1"
+hyper-util = { version = "0.1", features = ["full"] }
