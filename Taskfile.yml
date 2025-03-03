@@ -28,6 +28,12 @@ includes:
     dir: ./packages/hyper-ffi/
     optional: true
 
+  reqwest-ffi:
+    aliases: ["reqf", "rf"]
+    taskfile: ./packages/reqwest-ffi/
+    dir: ./packages/reqwest-ffi/
+    optional: true
+
   disc-ffi:
     aliases: ["disc:f"]
     taskfile: ./packages/disc-ffi/
