@@ -21,6 +21,10 @@ crate-type = [
 name = "c01"
 path = "examples/client/try01.rs"
 
+[[bin]]
+name = "c02"
+path = "examples/client/try02.rs"
+
 # hyper server
 [[bin]]
 name = "s01"
