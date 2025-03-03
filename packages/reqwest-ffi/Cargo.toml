@@ -22,6 +22,14 @@ crate-type = [
 name = "t01"
 path = "examples/try01.rs"
 
+[[bin]]
+name = "t01b"
+path = "examples/try01b.rs"
+
+[[bin]]
+name = "t02"
+path = "examples/try02.rs"
+
 
 [dependencies]
 reqwest = { version = "0.12", features = ["json"] }
