@@ -1,91 +1,127 @@
 #![deny(warnings)]
-#![allow(unused_imports)]
 
-use http_body_util::Full;
-use hyper::body::Bytes;
-#[cfg(feature = "server")]
-use hyper::server::conn::http2;
-use hyper::service::service_fn;
-use hyper::{Request, Response};
-use std::convert::Infallible;
 use std::net::SocketAddr;
-use tokio::net::TcpListener;
 
-// This would normally come from the `hyper-util` crate, but we can't depend
-// on that here because it would be a cyclical dependency.
+use bytes::{Buf, Bytes};
+use http_body_util::{BodyExt, Full};
+use hyper::server::conn::http1;
+use hyper::service::service_fn;
+use hyper::{Method, Request, Response, StatusCode, body::Incoming as IncomingBody, header};
+use tokio::net::{TcpListener, TcpStream};
+
 #[path = "../support/mod.rs"]
 mod support;
 use support::TokioIo;
 
-// An async function that consumes a request, does nothing with it and returns a
-// response.
-#[cfg(feature = "server")]
-async fn hello(_: Request<hyper::body::Incoming>) -> Result<Response<Full<Bytes>>, Infallible> {
-    Ok(Response::new(Full::new(Bytes::from("Hello, World!"))))
+type GenericError = Box<dyn std::error::Error + Send + Sync>;
+type Result<T> = std::result::Result<T, GenericError>;
+type BoxBody = http_body_util::combinators::BoxBody<Bytes, hyper::Error>;
+
+static INDEX: &[u8] = b"<a href=\"test.html\">test.html</a>";
+static INTERNAL_SERVER_ERROR: &[u8] = b"Internal Server Error";
+static NOTFOUND: &[u8] = b"Not Found";
+static POST_DATA: &str = r#"{"original": "data"}"#;
+static URL: &str = "http://127.0.0.1:1337/json_api";
+
+async fn client_request_response() -> Result<Response<BoxBody>> {
+    let req = Request::builder()
+        .method(Method::POST)
+        .uri(URL)
+        .header(header::CONTENT_TYPE, "application/json")
+        .body(Full::new(Bytes::from(POST_DATA)))
+        .unwrap();
+
+    let host = req.uri().host().expect("uri has no host");
+    let port = req.uri().port_u16().expect("uri has no port");
+    let stream = TcpStream::connect(format!("{}:{}", host, port)).await?;
+    let io = TokioIo::new(stream);
+
+    let (mut sender, conn) = hyper::client::conn::http1::handshake(io).await?;
+
+    tokio::task::spawn(async move {
+        if let Err(err) = conn.await {
+            println!("Connection error: {:?}", err);
+        }
+    });
+
+    let web_res = sender.send_request(req).await?;
+
+    let res_body = web_res.into_body().boxed();
+
+    Ok(Response::new(res_body))
 }
 
-#[derive(Clone)]
-// An Executor that uses the tokio runtime.
-pub struct TokioExecutor;
+async fn api_post_response(req: Request<IncomingBody>) -> Result<Response<BoxBody>> {
+    // Aggregate the body...
+    let whole_body = req.collect().await?.aggregate();
+    // Decode as JSON...
+    let mut data: serde_json::Value = serde_json::from_reader(whole_body.reader())?;
+    // Change the JSON...
+    data["test"] = serde_json::Value::from("test_value");
+    // And respond with the new JSON.
+    let json = serde_json::to_string(&data)?;
+    let response = Response::builder()
+        .status(StatusCode::OK)
+        .header(header::CONTENT_TYPE, "application/json")
+        .body(full(json))?;
+    Ok(response)
+}
 
-// Implement the `hyper::rt::Executor` trait for `TokioExecutor` so that it can be used to spawn
-// tasks in the hyper runtime.
-// An Executor allows us to manage execution of tasks which can help us improve the efficiency and
-// scalability of the server.
-impl<F> hyper::rt::Executor<F> for TokioExecutor
-where
-    F: std::future::Future + Send + 'static,
-    F::Output: Send + 'static,
-{
-    fn execute(&self, fut: F) {
-        tokio::task::spawn(fut);
+async fn api_get_response() -> Result<Response<BoxBody>> {
+    let data = vec!["foo", "bar"];
+    let res = match serde_json::to_string(&data) {
+        Ok(json) => Response::builder()
+            .header(header::CONTENT_TYPE, "application/json")
+            .body(full(json))
+            .unwrap(),
+        Err(_) => Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .body(full(INTERNAL_SERVER_ERROR))
+            .unwrap(),
+    };
+    Ok(res)
+}
+
+async fn response_examples(req: Request<IncomingBody>) -> Result<Response<BoxBody>> {
+    match (req.method(), req.uri().path()) {
+        (&Method::GET, "/") | (&Method::GET, "/index.html") => Ok(Response::new(full(INDEX))),
+        (&Method::GET, "/test.html") => client_request_response().await,
+        (&Method::POST, "/json_api") => api_post_response(req).await,
+        (&Method::GET, "/json_api") => api_get_response().await,
+        _ => {
+            // Return 404 not found response.
+            Ok(Response::builder()
+                .status(StatusCode::NOT_FOUND)
+                .body(full(NOTFOUND))
+                .unwrap())
+        }
     }
 }
 
-#[cfg(feature = "server")]
+fn full<T: Into<Bytes>>(chunk: T) -> BoxBody {
+    Full::new(chunk.into())
+        .map_err(|never| match never {})
+        .boxed()
+}
+
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+async fn main() -> Result<()> {
     pretty_env_logger::init();
 
-    // This address is localhost
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let addr: SocketAddr = "127.0.0.1:1337".parse().unwrap();
 
-    // Bind to the port and listen for incoming TCP connections
-    let listener = TcpListener::bind(addr).await?;
-
+    let listener = TcpListener::bind(&addr).await?;
     println!("Listening on http://{}", addr);
-
     loop {
-        // When an incoming TCP connection is received grab a TCP stream for
-        // client-server communication.
-        //
-        // Note, this is a .await point, this loop will loop forever but is not a busy loop. The
-        // .await point allows the Tokio runtime to pull the task off of the thread until the task
-        // has work to do. In this case, a connection arrives on the port we are listening on and
-        // the task is woken up, at which point the task is then put back on a thread, and is
-        // driven forward by the runtime, eventually yielding a TCP stream.
         let (stream, _) = listener.accept().await?;
-        // Use an adapter to access something implementing `tokio::io` traits as if they implement
-        // `hyper::rt` IO traits.
         let io = TokioIo::new(stream);
 
-        // Spin up a new task in Tokio so we can continue to listen for new TCP connection on the
-        // current task without waiting for the processing of the HTTP/2 connection we just received
-        // to finish
         tokio::task::spawn(async move {
-            // Handle the connection from the client using HTTP/2 with an executor and pass any
-            // HTTP requests received on that connection to the `hello` function
-            if let Err(err) = http2::Builder::new(TokioExecutor)
-                .serve_connection(io, service_fn(hello))
-                .await
-            {
-                eprintln!("Error serving connection: {}", err);
+            let service = service_fn(response_examples);
+
+            if let Err(err) = http1::Builder::new().serve_connection(io, service).await {
+                println!("Failed to serve connection: {:?}", err);
             }
         });
     }
-}
-
-#[cfg(not(feature = "server"))]
-fn main() {
-    panic!("This example requires the 'server' feature to be enabled");
 }

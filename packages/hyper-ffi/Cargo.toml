@@ -30,6 +30,14 @@ path = "examples/server/try01.rs"
 name = "s01b"
 path = "examples/server/try01b.rs"
 
+[[bin]]
+name = "s01c"
+path = "examples/server/try01c.rs"
+
+[[bin]]
+name = "s02"
+path = "examples/server/try02.rs"
+
 
 [dependencies]
 safer-ffi = { git = "https://github.com/getditto/safer_ffi.git", features = [
@@ -97,6 +105,8 @@ full = ["server", "client"]
 # 添加可选依赖包
 #
 server = [
+    "dep:serde_json",
+    "dep:serde",
     "dep:httpdate",
     "dep:pin-project-lite",
     "dep:smallvec",
@@ -107,6 +117,8 @@ server = [
 
 # 可选依赖包
 client = [
+    "dep:serde_json",
+    "dep:serde",
     "dep:httpdate",
     "dep:pin-project-lite",
     "dep:smallvec",
