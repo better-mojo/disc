@@ -1,6 +1,7 @@
 {
     "rust-analyzer.linkedProjects": [
         "packages/uuid-ffi/Cargo.toml",
+        "packages/hyper-ffi/Cargo.toml",
         "packages/reqwest-ffi/Cargo.toml",
     ],
 }
