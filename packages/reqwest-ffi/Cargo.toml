@@ -32,5 +32,10 @@ path = "examples/try02.rs"
 
 
 [dependencies]
+safer-ffi = { git = "https://github.com/getditto/safer_ffi.git", features = [
+    "python-headers",
+] }
+
+
 reqwest = { version = "0.12", features = ["json"] }
 tokio = { version = "1", features = ["full"] }

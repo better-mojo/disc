@@ -1,4 +1,4 @@
-use ::safer_ffi::prelude::*;
+use safer_ffi::prelude::*;
 
 /// A `struct` usable from both Rust and C
 #[derive_ReprC]
@@ -23,6 +23,12 @@ fn mid_point(a: &Point, b: &Point) -> Point {
 #[ffi_export]
 fn print_point(point: &Point) {
     println!("{:?}", point);
+}
+
+#[ffi_export]
+fn free_point(p: &Point) {
+    println!("Dropping a point at {:?}", p);
+    drop(p)
 }
 
 /// The following test function is necessary for the header generation.

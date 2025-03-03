@@ -24,6 +24,11 @@ typedef struct Point {
     double y;
 } Point_t;
 
+/** <No documentation available> */
+void
+free_point (
+    Point_t const * p);
+
 /** \brief
  *  Returns the middle point of `[a, b]`.
  */

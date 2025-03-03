@@ -18,6 +18,10 @@ typedef struct Point {
     double y;
 } Point_t;
 
+void
+free_point (
+    Point_t const * p);
+
 Point_t
 mid_point (
     Point_t const * a,
