@@ -148,6 +148,12 @@ pub fn rs_send_request(req: &HttpRequest) -> repr_c::Box<HttpResponse> {
     Box::new(HttpResponse::new(resp)).into()
 }
 
+#[ffi_export]
+pub fn rs_http_req_free(req: repr_c::Box<HttpRequest>) {
+    println!("rs > free http request");
+    drop(req);
+}
+
 // free the Box<Response> allocated in Rust
 #[ffi_export]
 pub fn rs_http_resp_free(resp: repr_c::Box<HttpResponse>) {

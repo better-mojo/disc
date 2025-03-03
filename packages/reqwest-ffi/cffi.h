@@ -83,6 +83,11 @@ new_http_request (
     char const * body);
 
 /** <No documentation available> */
+void
+rs_http_req_free (
+    HttpRequest_t * req);
+
+/** <No documentation available> */
 typedef struct HttpResponse HttpResponse_t;
 
 /** <No documentation available> */

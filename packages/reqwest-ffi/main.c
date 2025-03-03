@@ -16,6 +16,7 @@ int main(int argc, char const *const argv[])
 
     // free memory allocated by Rust
     rs_http_resp_free(response);
+    rs_http_req_free(req);
 
     return EXIT_SUCCESS;
 }

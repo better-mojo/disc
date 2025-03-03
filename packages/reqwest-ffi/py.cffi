@@ -41,6 +41,10 @@ new_http_request (
     HttpVersion_t version,
     char const * body);
 
+void
+rs_http_req_free (
+    HttpRequest_t * req);
+
 /** <No documentation available> */
 typedef struct HttpResponse HttpResponse_t;
 
