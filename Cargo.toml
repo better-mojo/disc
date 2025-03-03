@@ -3,4 +3,9 @@ resolver = "2"
 
 members = ["packages/demo-ffi"]
 
-exclude = ["tmp", "packages/uuid-ffi", "packages/hyper-ffi"]
+exclude = [
+    "tmp",
+    "packages/uuid-ffi",
+    "packages/hyper-ffi",
+    "packages/reqwest-ffi",
+]
