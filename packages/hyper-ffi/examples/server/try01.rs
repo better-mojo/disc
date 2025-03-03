@@ -1,147 +1,64 @@
 #![deny(warnings)]
 
+use std::convert::Infallible;
 use std::net::SocketAddr;
 
 use bytes::Bytes;
-use http_body_util::{BodyExt, Empty, Full, combinators::BoxBody};
-use hyper::client::conn::http1::Builder;
+use http_body_util::Full;
 use hyper::server::conn::http1;
 use hyper::service::service_fn;
-use hyper::upgrade::Upgraded;
-use hyper::{Method, Request, Response};
+use hyper::{Request, Response};
+use tokio::net::TcpListener;
 
-use tokio::net::{TcpListener, TcpStream};
-
+// This would normally come from the `hyper-util` crate, but we can't depend
+// on that here because it would be a cyclical dependency.
 #[path = "../support/mod.rs"]
 mod support;
-use support::TokioIo;
+use support::{TokioIo, TokioTimer};
 
-// To try this example:
-// 1. cargo run --example http_proxy
-// 2. config http_proxy in command line
-//    $ export http_proxy=http://127.0.0.1:8100
-//    $ export https_proxy=http://127.0.0.1:8100
-// 3. send requests
-//    $ curl -i https://www.some_domain.com/
+// An async function that consumes a request, does nothing with it and returns a
+// response.
+async fn hello(_: Request<impl hyper::body::Body>) -> Result<Response<Full<Bytes>>, Infallible> {
+    Ok(Response::new(Full::new(Bytes::from("Hello World!"))))
+}
+
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8100));
+pub async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    pretty_env_logger::init();
 
+    // This address is localhost
+    let addr: SocketAddr = ([127, 0, 0, 1], 3000).into();
+
+    // Bind to the port and listen for incoming TCP connections
     let listener = TcpListener::bind(addr).await?;
     println!("Listening on http://{}", addr);
-
     loop {
-        let (stream, _) = listener.accept().await?;
-        let io = TokioIo::new(stream);
+        // When an incoming TCP connection is received grab a TCP stream for
+        // client<->server communication.
+        //
+        // Note, this is a .await point, this loop will loop forever but is not a busy loop. The
+        // .await point allows the Tokio runtime to pull the task off of the thread until the task
+        // has work to do. In this case, a connection arrives on the port we are listening on and
+        // the task is woken up, at which point the task is then put back on a thread, and is
+        // driven forward by the runtime, eventually yielding a TCP stream.
+        let (tcp, _) = listener.accept().await?;
+        // Use an adapter to access something implementing `tokio::io` traits as if they implement
+        // `hyper::rt` IO traits.
+        let io = TokioIo::new(tcp);
 
+        // Spin up a new task in Tokio so we can continue to listen for new TCP connection on the
+        // current task without waiting for the processing of the HTTP1 connection we just received
+        // to finish
         tokio::task::spawn(async move {
+            // Handle the connection from the client using HTTP1 and pass any
+            // HTTP requests received on that connection to the `hello` function
             if let Err(err) = http1::Builder::new()
-                .preserve_header_case(true)
-                .title_case_headers(true)
-                .serve_connection(io, service_fn(proxy))
-                .with_upgrades()
+                .timer(TokioTimer::new())
+                .serve_connection(io, service_fn(hello))
                 .await
             {
-                println!("Failed to serve connection: {:?}", err);
+                println!("Error serving connection: {:?}", err);
             }
         });
     }
-}
-
-async fn proxy(
-    req: Request<hyper::body::Incoming>,
-) -> Result<Response<BoxBody<Bytes, hyper::Error>>, hyper::Error> {
-    println!("req: {:?}", req);
-
-    if Method::CONNECT == req.method() {
-        // Received an HTTP request like:
-        // ```
-        // CONNECT www.domain.com:443 HTTP/1.1
-        // Host: www.domain.com:443
-        // Proxy-Connection: Keep-Alive
-        // ```
-        //
-        // When HTTP method is CONNECT we should return an empty body
-        // then we can eventually upgrade the connection and talk a new protocol.
-        //
-        // Note: only after client received an empty body with STATUS_OK can the
-        // connection be upgraded, so we can't return a response inside
-        // `on_upgrade` future.
-        if let Some(addr) = host_addr(req.uri()) {
-            tokio::task::spawn(async move {
-                match hyper::upgrade::on(req).await {
-                    Ok(upgraded) => {
-                        if let Err(e) = tunnel(upgraded, addr).await {
-                            eprintln!("server io error: {}", e);
-                        };
-                    }
-                    Err(e) => eprintln!("upgrade error: {}", e),
-                }
-            });
-
-            Ok(Response::new(empty()))
-        } else {
-            eprintln!("CONNECT host is not socket addr: {:?}", req.uri());
-            let mut resp = Response::new(full("CONNECT must be to a socket address"));
-            *resp.status_mut() = http::StatusCode::BAD_REQUEST;
-
-            Ok(resp)
-        }
-    } else {
-        let host = req.uri().host().expect("uri has no host");
-        let port = req.uri().port_u16().unwrap_or(80);
-
-        let stream = TcpStream::connect((host, port)).await.unwrap();
-        let io = TokioIo::new(stream);
-
-        let (mut sender, conn) = Builder::new()
-            .preserve_header_case(true)
-            .title_case_headers(true)
-            .handshake(io)
-            .await?;
-        tokio::task::spawn(async move {
-            if let Err(err) = conn.await {
-                println!("Connection failed: {:?}", err);
-            }
-        });
-
-        let resp = sender.send_request(req).await?;
-        Ok(resp.map(|b| b.boxed()))
-    }
-}
-
-fn host_addr(uri: &http::Uri) -> Option<String> {
-    uri.authority().map(|auth| auth.to_string())
-}
-
-fn empty() -> BoxBody<Bytes, hyper::Error> {
-    Empty::<Bytes>::new()
-        .map_err(|never| match never {})
-        .boxed()
-}
-
-fn full<T: Into<Bytes>>(chunk: T) -> BoxBody<Bytes, hyper::Error> {
-    Full::new(chunk.into())
-        .map_err(|never| match never {})
-        .boxed()
-}
-
-// Create a TCP connection to host:port, build a tunnel between the connection and
-// the upgraded connection
-async fn tunnel(upgraded: Upgraded, addr: String) -> std::io::Result<()> {
-    // Connect to remote server
-    let mut server = TcpStream::connect(addr).await?;
-    let mut upgraded = TokioIo::new(upgraded);
-
-    // Proxying data
-    let (from_client, from_server) =
-        tokio::io::copy_bidirectional(&mut upgraded, &mut server).await?;
-
-    // Print message when done
-    println!(
-        "client wrote {} bytes and received {} bytes",
-        from_client, from_server
-    );
-
-    Ok(())
 }

@@ -41,9 +41,11 @@ bytes = "1.2"
 http = "1"
 http-body = "1"
 
+# for development(examples)
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 pin-project-lite = "0.2"
+pretty_env_logger = "0.5"
 
 [dev-dependencies]
 form_urlencoded = "1"
