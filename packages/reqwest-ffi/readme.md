@@ -63,3 +63,10 @@ task reqf:r -- --bin t01b
 
 - [Http客户端reqwest模块实战](https://juejin.cn/post/7226177081197068346)
     - 阻塞式请求 
+
+
+> ffi + cpp:
+
+- https://github.com/markrenChina/reqwest_cpp
+- [reqwest + proxy](https://github.com/markrenChina/reqwest_cpp/blob/master/client/src/proxy.rs#L10)
+- https://github.com/markrenChina/reqwest_cpp/blob/master/client/src/response.rs
