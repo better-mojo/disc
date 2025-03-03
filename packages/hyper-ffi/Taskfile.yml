@@ -12,7 +12,7 @@ tasks:
   run:
     aliases: ["r"]
     cmds:
-      - cargo run {{.CLI_ARGS}}
+      - cargo run {{.CLI_ARGS}} --features=full
 
   gen:
     cmds:
