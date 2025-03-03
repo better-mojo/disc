@@ -34,3 +34,9 @@ task reqf:r -- --bin t01b
 
 - https://github.com/seanmonstar/reqwest
 - https://docs.rs/reqwest/latest/reqwest/
+
+
+> usage:
+
+- [Http客户端reqwest模块实战](https://juejin.cn/post/7226177081197068346)
+    - 阻塞式请求 

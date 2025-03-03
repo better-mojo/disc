@@ -37,5 +37,5 @@ safer-ffi = { git = "https://github.com/getditto/safer_ffi.git", features = [
 ] }
 
 
-reqwest = { version = "0.12", features = ["json"] }
+reqwest = { version = "0.12", features = ["json", "blocking"] }
 tokio = { version = "1", features = ["full"] }
