@@ -14,6 +14,22 @@ tokio = { version = "1", features = ["full"] }
 ```
 
 
+### Run
+
+- [examples](./examples/)
+
+
+```bash
+
+cd git-repo-root-dir
+
+# run
+task rf:r -- --bin t01b
+task reqf:r -- --bin t01b
+
+```
+
+
 ## References
 
 - https://github.com/seanmonstar/reqwest
