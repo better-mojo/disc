@@ -20,4 +20,11 @@ hyper-util = { version = "0.1", features = ["full"] }
 
 ## References
 
+- https://github.com/hyperium/hyper
 - https://hyper.rs/guides/1/server/hello-world/
+
+### examples
+
+- https://github.com/hyperium/hyper/tree/master/examples
+- [http_proxy.rs](https://github.com/hyperium/hyper/blob/master/examples/http_proxy.rs)
+- [client_json.rs](https://github.com/hyperium/hyper/blob/master/examples/client_json.rs)

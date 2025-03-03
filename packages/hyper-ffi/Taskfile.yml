@@ -9,6 +9,11 @@ tasks:
     cmds:
       - cargo {{.CLI_ARGS}}
 
+  run:
+    aliases: ["r"]
+    cmds:
+      - cargo run {{.CLI_ARGS}}
+
   gen:
     cmds:
       - cargo clean
@@ -31,7 +36,7 @@ tasks:
     ignore_error: true
 
   run:c:
-    aliases: ["r"]
+    aliases: ["rc"]
     cmds:
       - task: b
       - gcc -L ./target/debug -l uuid_ffi  -o main  main.c  -include stdio.h # libuuid_ffi， 对应 uuid_ffi, 无需 Lib 前缀
