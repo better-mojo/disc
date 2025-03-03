@@ -16,6 +16,8 @@ tokio = { version = "1", features = ["full"] }
 
 ### Run
 
+#### Run C Example
+
 - run [main.c](./main.c)
 
 
@@ -34,6 +36,8 @@ rs > free http response
 
 ```
 
+
+#### Run Rust Example
 
 - [examples](./examples/)
 
