@@ -1,7 +1,7 @@
 # disc
 
 - 参考 [go 标准库](https://pkg.go.dev/std) 和 [x 扩展库](https://pkg.go.dev/golang.org/x) 设计的一个 mojo 工具库
-
+- 参考 [rust 标准库](https://doc.rust-lang.org/std/#modules)
 
 
 ## References
