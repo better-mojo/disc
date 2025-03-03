@@ -32,6 +32,7 @@ Cargo.lock
 !**/.vscode/extensions.json
 !**/.vscode/launch.json
 !**/.vscode/tasks.json
+!**/.vscode/faq.md
 
 
 .DS_Store
