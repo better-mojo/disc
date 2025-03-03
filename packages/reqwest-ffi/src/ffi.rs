@@ -3,6 +3,108 @@ use safer_ffi::prelude::*;
 use std::{collections::HashMap, os::raw::c_char};
 use std::{ffi::CString, iter::Map};
 
+#[ffi_export]
+#[derive_ReprC]
+#[derive(Debug, Clone, Copy)]
+#[repr(u8)]
+pub enum Method {
+    Options,
+    Get,
+    Post,
+    Put,
+    Delete,
+    Head,
+    Trace,
+    Connect,
+    Patch,
+}
+
+#[ffi_export]
+#[derive_ReprC]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord, Hash)]
+#[repr(u8)]
+pub enum HttpVersion {
+    Http09,
+    Http10,
+    Http11,
+    H2,
+    H3,
+    __NonExhaustive,
+}
+
+impl From<Method> for http::Method {
+    fn from(method: Method) -> Self {
+        match method {
+            Method::Get => http::Method::GET,
+            Method::Post => http::Method::POST,
+            Method::Put => http::Method::PUT,
+            Method::Delete => http::Method::DELETE,
+            Method::Head => http::Method::HEAD,
+            Method::Options => http::Method::OPTIONS,
+            Method::Connect => http::Method::CONNECT,
+            Method::Patch => http::Method::PATCH,
+            Method::Trace => http::Method::TRACE,
+        }
+    }
+}
+
+impl From<HttpVersion> for http::Version {
+    fn from(version: HttpVersion) -> Self {
+        match version {
+            HttpVersion::Http09 => http::Version::HTTP_09,
+            HttpVersion::Http10 => http::Version::HTTP_10,
+            HttpVersion::Http11 => http::Version::HTTP_11,
+            HttpVersion::H2 => http::Version::HTTP_2,
+            HttpVersion::H3 => http::Version::HTTP_3,
+            HttpVersion::__NonExhaustive => http::Version::HTTP_11, // Default to HTTP/1.1
+        }
+    }
+}
+
+impl From<http::Version> for HttpVersion {
+    fn from(version: http::Version) -> Self {
+        match version {
+            http::Version::HTTP_09 => HttpVersion::Http09,
+            http::Version::HTTP_10 => HttpVersion::Http10,
+            http::Version::HTTP_11 => HttpVersion::Http11,
+            http::Version::HTTP_2 => HttpVersion::H2,
+            http::Version::HTTP_3 => HttpVersion::H3,
+            _ => HttpVersion::__NonExhaustive,
+        }
+    }
+}
+
+// http request
+#[derive_ReprC]
+#[repr(opaque)]
+struct HttpRequest {
+    method: http::Method,
+    url: String,
+    headers: http::HeaderMap,
+    version: HttpVersion,
+    body: String,
+}
+
+impl HttpRequest {
+    fn new(
+        method: Method,
+        url: char_p::Ref<'_>,
+        version: HttpVersion,
+        body: char_p::Ref<'_>,
+    ) -> Self {
+        let headers = http::HeaderMap::new();
+        let method = method.into();
+
+        Self {
+            method,
+            url: url.to_string(),
+            headers,
+            version,
+            body: body.to_string(),
+        }
+    }
+}
+
 #[derive_ReprC]
 #[repr(opaque)]
 struct HttpResponse {
@@ -21,54 +123,14 @@ impl HttpResponse {
 }
 
 #[ffi_export]
-/// 生成新的 UUIDv4
-pub fn rs_http_get(url: String, params: Vec<(String, String)>) -> repr_c::Box<HttpResponse> {
-    let params_str = params
-        .into_iter()
-        .map(|(k, v)| format!("{}={}", k, v))
-        .collect::<Vec<String>>()
-        .join("&");
-    let uri = format!("{}?{}", url, params_str);
-    println!("rs > http get req uri: {}", uri);
-
+pub fn rs_send_request(req: &HttpRequest) -> repr_c::Box<HttpResponse> {
     let client = Client::new();
-    let resp = client.get(&uri).send().unwrap();
-    println!("rs > http get resp = {:?}", resp.text().unwrap());
-
-    Box::new(HttpResponse::new(resp)).into()
-}
-
-/// Performs an HTTP POST request to the specified URL with given parameters.
-///
-/// # Arguments
-///
-/// * `url` - A String that holds the URL to which the POST request will be sent.
-/// * `params` - A Vec of tuples (String, String) representing the key-value pairs
-///              to be sent as query parameters in the request.
-///
-/// # Returns
-///
-/// A `repr_c::Box<Response>` containing the HTTP response from the server.
-/// This boxed response can be used to access the status, headers, and body of the response.
-#[ffi_export]
-pub fn rs_http_post_form(url: String, form: HashMap<String, String>) -> repr_c::Box<HttpResponse> {
-    println!("rs > http post req uri: {}, form: {:?}", url, form);
-
-    let client = Client::new();
-    let resp = client.post(&url).form(&form).send().unwrap();
-    println!("rs > http post resp = {:?}", resp.status());
-
-    Box::new(HttpResponse::new(resp)).into()
-}
-
-// http post json
-#[ffi_export]
-pub fn rs_http_post_json(url: String, json: HashMap<String, String>) -> repr_c::Box<HttpResponse> {
-    println!("rs > http post req uri: {}, json: {:?}", url, json);
-
-    let client = Client::new();
-    let resp = client.post(&url).json(&json).send().unwrap();
-    println!("rs > http post resp = {:?}", resp.status());
+    let resp = client
+        .request(req.method.clone(), &req.url)
+        .headers(req.headers.clone())
+        .body(req.body.clone())
+        .send()
+        .unwrap();
 
     Box::new(HttpResponse::new(resp)).into()
 }
