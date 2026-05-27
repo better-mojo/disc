@@ -1,0 +1,105 @@
+version: "3"
+
+tasks:
+  pixi:
+    cmds:
+      - pixi {{.CLI_ARGS}}
+
+  install:
+    aliases: ["i"]
+    cmds:
+      - pixi install
+      - pixi install -e=dev
+
+  run:
+    aliases: ["r"]
+    cmds:
+      - pixi run mojo -I ./src/ examples/basic.mojo
+
+  build:mojo:
+    aliases: ["b:mojo"]
+    cmds:
+      - pixi run mojo precompile ./src/redis/ -o output/redis.mojoc
+      - open output/
+
+  release:rust:
+    aliases: ["rel:rs", "rel:ffi"]
+    cmds:
+      - pixi run build-rs
+
+  release:mojo:
+    aliases: ["rel:mojo"]
+    cmds:
+      - pixi run build-mojo
+
+  # quick + publish ffi package
+  quick:rs:
+    aliases: ["q:rs"]
+    cmds:
+      - rm -rf output/
+      - pixi run build-rs
+      - task: publish:ffi
+    ignore_error: true
+
+  quick:mojo:
+    aliases: ["q:mojo"]
+    cmds:
+      - rm -rf output/
+      - pixi run build-mojo
+      - task: publish:mojo
+    ignore_error: true
+
+  #
+  # ref: https://taskfile.dev/usage/#looping-over-variables
+  #
+  publish:ffi:
+    aliases: ["upf", "up:ffi", "pub", "pub:auto"]
+    vars:
+      UP_PKGS:
+        sh: find . -name "libredis_ffi-*.conda" -type f
+    cmds:
+      - echo $PREFIX_DEV_API_KEY
+      - echo {{ .UP_PKGS }}
+      - for: { var: UP_PKGS }
+        cmd: |
+          pixi run -e=dev rattler-build upload prefix -c "better-ffi" \
+            --api-key=$PREFIX_DEV_API_KEY \
+            {{.ITEM}}
+      - open https://prefix.dev/channels/better-ffi/packages/libredis_ffi
+    dir: output/
+
+  publish:mojo:
+    aliases: ["up", "up:mojo", "pub", "pub:auto"]
+    vars:
+      UP_PKGS:
+        sh: find . -name "redis-*.conda" -type f
+    cmds:
+      - echo {{ .UP_PKGS }}
+      - for: { var: UP_PKGS }
+        cmd: |
+          pixi run -e=dev rattler-build upload prefix -c "better-mojo" \
+            --api-key=$PREFIX_DEV_API_KEY \
+            {{.ITEM}}
+      - open https://prefix.dev/channels/better-mojo
+      - open https://prefix.dev/channels/better-mojo/packages/redis
+    dir: output/
+
+  clean:
+    aliases: ["del", "cl"]
+    cmds:
+      - task: clean:env
+      - task: clean:dist
+    ignore_error: true
+
+  clean:env:
+    aliases: ["del:env"]
+    cmds:
+      - rm -rf .pixi/
+    ignore_error: true
+
+  clean:dist:
+    aliases: ["del:dist"]
+    cmds:
+      - rm -rf dist/
+      - rm -rf output/
+    ignore_error: true

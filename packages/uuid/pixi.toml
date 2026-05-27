@@ -1,0 +1,47 @@
+[workspace]
+authors = ["hhglory <hhglory@outlook.com>"]
+channels = [
+    "https://conda.modular.com/max-nightly",
+    "conda-forge",
+    "https://repo.prefix.dev/better-ffi",
+]
+name = "uuid"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+preview = ["pixi-build"]
+
+
+[package]
+name = "uuid"
+version = "0.1.0"
+
+
+[package.build]
+backend = { name = "pixi-build-rattler-build", version = "*" }
+
+
+[dependencies]
+mojo = ">=1.0.0b2.dev2026052215,<2"
+libuuid_ffi = ">=0.2.3,<0.3"
+
+
+[feature.dev.dependencies]
+pre-commit = ">=4.2.0,<5"
+
+
+[activation]
+env = { MOJO_FLAGS = "-I ." }
+
+
+[environments]
+default = { features = ["dev"], solve-group = "default" }
+dev = { features = ["dev"], solve-group = "default" }
+
+
+[tasks]
+# Format
+install-pre-commit = "pre-commit install"
+format = { cmd = "mojo format src tests examples", depends-on = [
+    "install-pre-commit",
+] }
+format-check = "mojo format --check src tests examples"

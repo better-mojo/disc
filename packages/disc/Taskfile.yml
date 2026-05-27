@@ -1,0 +1,71 @@
+version: "3"
+
+tasks:
+  magic:
+    cmds:
+      - magic {{.CLI_ARGS}}
+
+  install:
+    aliases: ["i"]
+    cmds:
+      - magic install
+      - magic install -e=dev
+
+  run:
+    aliases: ["r"]
+    cmds:
+      - magic run mojo run {{.CLI_ARGS}}
+
+  release:rust:
+    aliases: ["rel:rs", "rel:ffi"]
+    cmds:
+      - magic run build-rs
+      - open output/
+
+  release:mojo:
+    aliases: ["rel:mojo"]
+    cmds:
+      - magic run build-mojo
+      - open output/
+
+  #
+  # ref: https://taskfile.dev/usage/#looping-over-variables
+  #
+  publish:mojo:
+    aliases: ["up", "up:mojo", "pub", "pub:auto"]
+    vars:
+      UP_PKGS:
+        sh: find . -name "*.conda" -type f
+    cmds:
+      - echo {{ .UP_PKGS }}
+      - for: { var: UP_PKGS }
+        cmd: |
+          magic run rattler-build upload prefix -c "better-mojo" \
+            --api-key=$PREFIX_DEV_API_KEY \
+            {{.ITEM}}
+      - open https://prefix.dev/channels/better-mojo
+    dir: output/
+
+  #
+  # ref: https://taskfile.dev/usage/#looping-over-variables
+  #
+  publish:ffi:
+    aliases: ["upf", "up:ffi", "pub", "pub:auto"]
+    vars:
+      UP_PKGS:
+        sh: find . -name "*.conda" -type f
+    cmds:
+      - echo $PREFIX_DEV_API_KEY
+      - echo {{ .UP_PKGS }}
+      - for: { var: UP_PKGS }
+        cmd: |
+          magic run -e=dev rattler-build upload prefix -c "better-ffi" \
+            --api-key=$PREFIX_DEV_API_KEY \
+            {{.ITEM}}
+      - open https://prefix.dev/channels/better-ffi
+    dir: output/
+
+  clean:
+    aliases: ["c", "cl"]
+    cmds:
+      - rm -rf output/

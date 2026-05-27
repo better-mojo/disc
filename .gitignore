@@ -29,9 +29,11 @@ Cargo.lock
 
 
 **/.vscode/*
+!**/.vscode/settings.json
 !**/.vscode/extensions.json
 !**/.vscode/launch.json
 !**/.vscode/tasks.json
+!**/.vscode/faq.md
 
 
 .DS_Store
@@ -68,6 +70,37 @@ output/
 # mojo env
 .magic
 build/
+*.mojopkg
 
 # mkdocs
 site/
+
+# build
+main# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+
+# macOS
+.DS_Store
+
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+*.lock
+
+# Build outputs
+target/
+
+# Mojo cache
+__pycache__/
+*.mojopkg
+
+# Editor / agent state
+.cursor/
+.trae/
+.pnpm-store/
+
+
+# bin
+main

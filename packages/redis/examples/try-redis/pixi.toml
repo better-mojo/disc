@@ -1,0 +1,20 @@
+[workspace]
+authors = ["hhglory <hhglory@outlook.com>"]
+channels = [
+    "https://conda.modular.com/max-nightly",
+    "https://repo.prefix.dev/better-ffi",    # contains spdlog-ffi package
+    "https://repo.prefix.dev/better-mojo",   # contains spdlog mojo package
+    "conda-forge",
+]
+name = "try-redis"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+mojo = ">=1.0.0b2.dev2026052706,<2"
+
+
+libredis_ffi = ">=1.2.1b,<2"
+redis = ">=1.2.2,<2"

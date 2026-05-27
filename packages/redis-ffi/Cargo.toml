@@ -1,0 +1,37 @@
+[package]
+name = "redis-ffi"
+version = "1.2.1"  # TODO X: 和 redis-rs 版本保持一致
+edition = "2021"
+
+# fix for pixi + rattler-build
+[workspace]
+
+[lib]
+crate-type = [
+    "staticlib", # Ensure it gets compiled as a (static) C library
+    "cdylib",    # If you want a shared/dynamic C library (advanced)
+    "lib",       # For `generate-headers` and other downstream rust dependents
+    #    "rlib",
+    # such as integration `tests/`, `examples/`, and doctests
+]
+
+
+[[bin]]
+name = "generate-headers"
+path = "gen/gen.rs"
+required-features = ["c-headers"] # Do not build unless generating headers.
+
+
+[dependencies]
+safer-ffi = { version = "0.1.*", features = ["python-headers"] }
+# safer-ffi = { git = "https://github.com/getditto/safer_ffi.git", features = [
+#     "python-headers",
+# ] }
+
+# redis = { version = "0.27", features = ["tokio-comp"] }
+redis = { version = "1", features = ["tokio-comp"] }
+tokio = { version = "1", features = ["rt-multi-thread"] }
+once_cell = "1"
+
+[features]
+c-headers = ["safer-ffi/headers"]

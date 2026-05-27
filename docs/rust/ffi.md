@@ -4,6 +4,11 @@
 
 - TODO
 
+## safer_ffi
+
+- https://getditto.github.io/safer_ffi/usage/lib-rs.html
+    - 生成 c headers
+
 ## hyper:ffi
 
 - https://docs.rs/hyper/latest/hyper/ffi/
